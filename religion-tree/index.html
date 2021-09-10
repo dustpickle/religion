@@ -7,7 +7,7 @@
 <title>World Religions Tree</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <style>
-td {
+/** td {
     margin: 0;
     border: 0;
     padding: 0;
@@ -26,13 +26,25 @@ img {
 	
 	.image img {
     width: 100%;
+} **/
+	
+	div#container {
+    display: table;
+}
+	.image-row {
+    display: table-row;
+}
+	.image {
+    display: table-cell;
 }
 	
 </style>
+	
+	  <link rel="stylesheet" href="assets/jquery.tilezoom.css">
+
 </head>
 <body>
-<br>
-<div class="image-map-wrapper">
+<div id="container" class="image-map-wrapper">
   <div class="image-row">
     <div class="image"><img src="img/religions_tree_8_0.png"/></div>
     <div class="image"><img src="img/religions_tree_8_1.png"/></div>
