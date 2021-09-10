@@ -42,13 +42,26 @@ img {
     display: block;
 }
 	
-</style>
+	.container {
+    cursor: grab;
+    overflow: auto;
+}
 	
-	  <link rel="stylesheet" href="assets/jquery.tilezoom.css">
+	img {
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+	
+	
+</style>
 
 </head>
 <body>
-<div id="container" class="image-map-wrapper">
+<div id="container" class="container image-map-wrapper">
   <div class="image-row">
     <div class="image"><img src="img/religions_tree_8_0.png"/></div>
     <div class="image"><img src="img/religions_tree_8_1.png"/></div>
@@ -130,5 +143,63 @@ img {
     <div class="image"><img src="img/religions_tree_8_63.png"/></div>
   </div>
 </div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	
+	<script>
+	$(function(){
+  var curDown = false,
+      curYPos = 0,
+      curXPos = 0;
+  
+  $(window).mousemove(function(m){
+    if(curDown){
+      window.scrollBy(curXPos - m.pageX, curYPos - m.pageY)
+    }
+  });
+  
+  $(window).mousedown(function(m){
+    curYPos = m.pageY;
+    curXPos = m.pageX;
+    curDown = true;
+  });
+  
+  $(window).mouseup(function(){
+    curDown = false;
+  });
+})
+	
+	</script>
+	
+	<!-- <script>
+	const ele = document.getElementById('container');
+ele.scrollTop = 100;
+ele.scrollLeft = 150;
+		
+	let pos = { top: 0, left: 0, x: 0, y: 0 };
+
+const mouseDownHandler = function(e) {
+    pos = {
+        // The current scroll 
+        left: ele.scrollLeft,
+        top: ele.scrollTop,
+        // Get the current mouse position
+        x: e.clientX,
+        y: e.clientY,
+    };
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+};
+		
+		const mouseMoveHandler = function(e) {
+    // How far the mouse has been moved
+    const dx = e.clientX - pos.x;
+    const dy = e.clientY - pos.y;
+
+    // Scroll the element
+    ele.scrollTop = pos.top - dy;
+    ele.scrollLeft = pos.left - dx;
+};
+	</script> -->
 </body>
 </html>
