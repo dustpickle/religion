@@ -2,25 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>World Religions Tree</title>
 <style>
   .container {
     overflow: auto;
     cursor: grab;
-    transform-origin: top left; /* Ensures zoom applies from top left corner */
-    width: max-content; /* Ensures the container's size is as wide as its content */
+    position: relative;
+    width: 100%;
+    height: 800px; /* Adjust based on your needs */
   }
-
   .image-row {
     display: flex;
   }
-
   .image img {
-    display: block;
+    max-width: none;
+    width: auto;
+    height: auto;
     user-drag: none;
-    -webkit-user-drag: none;
     user-select: none;
     -moz-user-select: none;
+    -webkit-user-drag: none;
     -webkit-user-select: none;
     -ms-user-select: none;
   }
@@ -111,59 +114,60 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-  $(function(){
-    var scale = 1, // Initial scale
-        scaleStep = 0.1, // Step for each zoom action
-        container = $('#container');
+$(function(){
+  var container = $('#container'),
+      scale = 1, // Initial scale
+      scaleMultiplier = 0.1,
+      start = { x: 0, y: 0 },
+      moveContinue = false;
 
-    // Initial zoom out to fit inside the browser
-    container.css('transform', 'scale(1)');
+  function setTransform() {
+    container.css('transform', 'scale(' + scale + ')');
+    container.css('transformOrigin', '0 0');
+  }
 
-    // Zoom functionality
-    container.on('wheel', function(e) {
-      e.preventDefault();
-      var delta = e.originalEvent.deltaY;
-      // Zoom in or out
-      if (delta > 0) {
-        // Zoom out
-        scale -= scaleStep;
-      } else {
-        // Zoom in
-        scale += scaleStep;
-      }
-      scale = Math.min(Math.max(.125, scale), 4); // Limit scale between 0.125x and 4x
-      container.css('transform', `scale(${scale})`);
-    });
+  function zoom(event) {
+    event.preventDefault();
+    var delta = (event.delta || event.originalEvent.wheelDelta) || -event.originalEvent.detail;
+    var zoomOut = delta ? delta < 0 : event.originalEvent.deltaY > 0;
+    scale += zoomOut ? -scaleMultiplier : scaleMultiplier;
+    scale = Math.min(Math.max(0.5, scale), 4); // Limit scale for zooming
+    setTransform();
+  }
 
-    // Panning functionality
-    var isPanning = false,
-        startX = 0,
-        startY = 0;
+  function startMove(event) {
+    event.preventDefault();
+    start = { x: event.clientX, y: event.clientY };
+    moveContinue = true;
+    container.on('mousemove', move);
+  }
 
-    container.mousedown(function(e) {
-      e.preventDefault();
-      isPanning = true;
-      startX = e.pageX - $(this).offset().left;
-      startY = e.pageY - $(this).offset().top;
-      $(this).addClass('active');
-    });
+  function endMove(event) {
+    event.preventDefault();
+    moveContinue = false;
+    container.off('mousemove', move);
+  }
 
-    container.mousemove(function(e) {
-      if (!isPanning) return;
-      e.preventDefault();
-      var x = e.pageX - $(this).offset().left,
-          y = e.pageY - $(this).offset().top;
-      $(this).scrollTop($(this).scrollTop() + (startY - y));
-      $(this).scrollLeft($(this).scrollLeft() + (startX - x));
-      startX = x;
-      startY = y;
-    });
+  function move(event) {
+    if (moveContinue) {
+      var deltaX = event.clientX - start.x,
+          deltaY = event.clientY - start.y;
 
-    $(window).mouseup(function() {
-      isPanning = false;
-      container.removeClass('active');
-    });
-  });
+      var currentTop = container.scrollTop(),
+          currentLeft = container.scrollLeft();
+
+      container.scrollTop(currentTop - deltaY);
+      container.scrollLeft(currentLeft - deltaX);
+
+      start.x = event.clientX;
+      start.y = event.clientY;
+    }
+  }
+
+  container.on('mousewheel DOMMouseScroll', zoom);
+  container.on('mousedown', startMove);
+  $(window).on('mouseup', endMove);
+});
 </script>
 </body>
 </html>
